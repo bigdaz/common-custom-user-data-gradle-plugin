@@ -69,7 +69,7 @@ final class Overrides {
                 booleanSysPropertyOrEnvVariable(REMOTE_CACHE_ENABLED, providers).ifPresent(remote::setEnabled);
                 booleanSysPropertyOrEnvVariable(REMOTE_CACHE_PUSH, providers).ifPresent(remote::setPush);
             });
-        } else if (develocityCacheClass.isInstance(buildCache.getRemote())) {
+        } else if (develocityCacheClass != null && develocityCacheClass.isInstance(buildCache.getRemote())) {
             buildCache.remote(develocityCacheClass, remote -> {
                 BuildCacheAdapter adapter = createBuildCacheAdapter(remote, develocityCacheClass);
                 sysPropertyOrEnvVariable(REMOTE_CACHE_SERVER, providers).ifPresent(adapter::setServer);

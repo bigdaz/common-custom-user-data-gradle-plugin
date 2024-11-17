@@ -5,6 +5,8 @@ import com.gradle.develocity.agent.gradle.adapters.DevelocityAdapter;
 import com.gradle.develocity.agent.gradle.adapters.develocity.DevelocityConfigurationAdapter;
 import com.gradle.develocity.agent.gradle.adapters.enterprise.BuildScanExtension_1_X_Adapter;
 import com.gradle.develocity.agent.gradle.adapters.enterprise.GradleEnterpriseExtensionAdapter;
+import com.gradle.develocity.agent.gradle.adapters.internal.LegacyGradleEnterpriseExtensionAdapter;
+
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
@@ -33,6 +35,7 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
     }
 
     public void apply(Object target) {
+        System.out.println("USING CUSTOMIZED CCUD Gradle Plugin");
         if (target instanceof Settings) {
             if (!isGradle6OrNewer()) {
                 throw new GradleException("For Gradle versions prior to 6.0, common-custom-user-data-gradle-plugin must be applied to the Root project");
@@ -127,7 +130,14 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
             return new DevelocityConfigurationAdapter(develocityExtension);
         }
 
-        return new GradleEnterpriseExtensionAdapter(extensions.getByName("gradleEnterprise"));
+        System.out.println("CREATING APAPTER FOR GRADLE ENTERPRISE EXTENSION");
+        Object gradleEnterprise = extensions.getByName("gradleEnterprise");
+        boolean hasBuildCache = Arrays.stream(gradleEnterprise.getClass().getMethods()).anyMatch(it -> it.getName().equals("getBuildCache()"));
+        if (hasBuildCache) {
+            return new GradleEnterpriseExtensionAdapter(gradleEnterprise);
+        } else {
+            return new LegacyGradleEnterpriseExtensionAdapter(gradleEnterprise);
+        }
     }
 
     private void applyProjectPluginGradle4(Project project) {
