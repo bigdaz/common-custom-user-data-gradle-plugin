@@ -18,6 +18,13 @@ jobs:
       - name: Checkout local repo
         uses: actions/checkout@v4
 
+      - name: Checkout develocity-agent-adapters repo
+        uses: actions/checkout@v4
+        with:
+          repository: 'bigdaz/develocity-agent-adapters'
+          ref: 'improve-compatibility'
+          path: 'develocity-agent-adapters'
+
       - name: Read current CCUD version from release/version.txt
         id: determine-current-version
         run: 
@@ -42,7 +49,7 @@ jobs:
 
       - name: Build CCUD plugin
         if: ${{ steps.determine-current-version.outputs.ccud-version == steps.determine-test-version.outputs.ccud-version }}
-        run: ./gradlew publish
+        run: ./gradlew --include-build develocity-agent-adapters publish
 
       - name: Save plugin repository as artifact
         if: ${{ steps.determine-current-version.outputs.ccud-version == steps.determine-test-version.outputs.ccud-version }}
