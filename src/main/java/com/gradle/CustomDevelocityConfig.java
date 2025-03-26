@@ -13,6 +13,10 @@ final class CustomDevelocityConfig {
     void configureDevelocity(DevelocityAdapter develocity) {
         /* Example of Develocity configuration
 
+        develocity.setServer("https://ge-helm-standalone-unstable-release.grdev.net");
+        develocity.setAllowUntrustedServer(true);
+        develocity.setProjectId("ccud-injection");
+
         develocity.setServer("https://enterprise-samples.gradle.com");
         develocity.setAllowUntrustedServer(false);
 
@@ -21,6 +25,37 @@ final class CustomDevelocityConfig {
 
     void configureBuildScanPublishing(BuildScanAdapter buildScan) {
         /* Example of build scan publishing configuration
+
+        buildScan.publishOnFailure();
+
+        buildScan.tag("CCUD_TESTING");
+        buildScan.link("LINK", "https://github.com/gradle/actions");
+        buildScan.value("CUSTOM_VALUE", "THE VALUE");
+
+        buildScan.setUploadInBackground(false);
+
+        buildScan.capture(capture -> {
+            capture.setFileFingerprints(false);
+            capture.setBuildLogging(false);
+            capture.setTestLogging(false);
+        });
+
+        BuildScanObfuscationAdapter obfuscationAdapter = buildScan.getObfuscation();
+        if (obfuscationAdapter != null) {
+            obfuscationAdapter.hostname(s -> "FIXED-HOSTNAME");
+        }
+
+        buildScan.obfuscation(obfuscation -> {
+            obfuscation.username(s -> "FIXED-USERNAME");
+        });
+
+        buildScan.background(adapter -> {
+            adapter.tag("BACKGROUND_TAG");
+        });
+
+        buildScan.buildFinished(adapter -> {
+            buildScan.tag("BUILD_FINISHED_TAG");
+        });
 
         boolean isCiServer = System.getenv().containsKey("CI");
 
