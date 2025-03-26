@@ -31,3 +31,5 @@ buildCache {
 }
 
 rootProject.name = "common-custom-user-data-gradle-plugin"
+
+includeBuild("../develocity-agent-adapters")
